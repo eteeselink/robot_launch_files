@@ -2,21 +2,26 @@
 
 <launch>
 
-    <!-- Get the machine file -->
-    <arg name="machine" default="localhost"/>
-    <include file="$(env ROBOT_BRINGUP_PATH)/machines/$(arg machine).machine" />
-    <arg name="name" />
+	<arg name="name" />
+	<arg name="robot_name" />
 
-    <arg name="gdb" default="false"/>
-    <arg if="$(arg gdb)" name="launch-prefix" value="gdb -ex run --args"/>
-    <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
+	<include file="$(find freenect_launch)/launch/freenect.launch">
+		<arg name="camera" default="$(arg name)" />
 
-    <group ns="$(arg name)">
+		<arg name="rgb_frame_id"   default="$(arg robot_name)/$(arg name)/openni_rgb_optical_frame" />
+  		<arg name="depth_frame_id" default="$(arg robot_name)/$(arg name)/openni_depth_optical_frame" />
 
-        <node pkg="kinect_driver" type="kinect_driver" name="driver" machine="$(arg machine)" respawn="true">
-            <rosparam command="load" file="$(env ROBOT_BRINGUP_PATH)/parameters/hardware/sensors/$(arg name).yaml" />
-        </node>
+		<arg name="load_driver" default="true" />
+		<arg name="publish_tf" default="false" />
 
-    </group>
+		<arg name="rgb_processing"                  default="true"/>
+		<arg name="ir_processing"                   default="false"/>
+		<arg name="depth_processing"                default="true"/>
+		<arg name="depth_registered_processing"     default="true"/>
+		<arg name="disparity_processing"            default="false"/>
+		<arg name="disparity_registered_processing" default="false"/>
+		<arg name="hw_registered_processing"        default="false" />
+		<arg name="sw_registered_processing"        default="true" />
+	</include>
 
 </launch>
