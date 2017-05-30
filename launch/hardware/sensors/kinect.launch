@@ -8,6 +8,9 @@
 	<include file="$(find freenect_launch)/launch/freenect.launch">
 		<arg name="camera" default="$(arg name)" />
 
+		<arg name="rgb_frame_id"   default="$(arg robot_name)/$(arg name)/openni_rgb_optical_frame" />
+		<arg name="depth_frame_id" default="$(arg robot_name)/$(arg name)/openni_depth_optical_frame" />
+
 		<arg name="load_driver" default="true" />
 		<arg name="publish_tf" default="false" />
 
