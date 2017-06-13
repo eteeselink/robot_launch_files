@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<arg name="from" />
+	<arg name="to" />
+
+	<arg name="depth_topic" value="depth_registered/sw_registered/image_rect" />
+	<node name="$(arg from)_depth_relay" pkg="topic_tools" type="relay" args="$(arg from)/$(arg depth_topic) $(arg to)/$(arg depth_topic)">
+		<param name="lazy" value="true" />
+	</node>
+
+	<arg name="camera_info_topic" value="depth_registered/sw_registered/camera_info" />
+	<node name="$(arg from)_camera_info_relay" pkg="topic_tools" type="relay" args="$(arg from)/$(arg camera_info_topic) $(arg to)/$(arg camera_info_topic)">
+		<param name="lazy" value="true" />
+	</node>
+
+	<arg name="rgb_topic" value="rgb/image_rect_color" />
+	<node name="$(arg from)_rgb_relay" pkg="topic_tools" type="relay" args="$(arg from)/$(arg rgb_topic) $(arg to)/$(arg rgb_topic)">
+		<param name="lazy" value="true" />
+	</node>
+
+</launch>
