@@ -3,6 +3,7 @@
 import rospy, sys, random, time
 from geometry_msgs.msg import Twist
 from smach_msgs.msg import SmachContainerStatus
+from hmi import TimeoutException
 
 rospy.init_node('joke')
 
@@ -17,7 +18,7 @@ else:
     rospy.loginfo("Unknown robot namespace %s" % robot_name)
     sys.exit(1)
 
-e = robot.ears
+hmi = robot.hmi
 s = robot.speech
 
 last_update = rospy.Time.now()
@@ -26,17 +27,21 @@ minutes = 20
 from collections import deque
 
 jokes = [
-    "What do you call a fish with no eyes? A fsh.",
+    "What do you call a fish with no eyes? An fsh.",
     "You don't need a parachute to go skydiving. You need a parachute to go skydiving twice.",
-    "What is the difference between a snowman and a snowwomen? Snowballs.",
+    "What is the difference between a snowman and a snowwoman? Snowballs.",
     "What is Bruce Lee's favorite drink? Wataaaaah!",
     "A blind man walks into a bar. And a table. And a chair.",
-    "Its color is yellow and when you push the button, it turns red?         A chick in the blender",
+    "What is yellow and when you push the button, it turns red?         A chick in the blender",
     "Why was 6 afraid of 7?                  Because 7, 8, 9",
-    "How do you call a robot that always goes the long way around?                       R 2 detour",
+    "What do you call a robot that always goes the long way around?                       R 2 detour",
     "Can a kangaroo jump higher than a house?                  Of course, a house does not jump at all.",
     "What should you put on the tomb stone of a mathematician?              He did not count with this...",
     "Why do cows wear bells?               Their horns do not work.",
+    "What did one ocean say to the other?         Nothing, they just waved",
+    "What does the roof say to the house?         I got you covered",
+    "People used to laugh at me when I would say     I want to be a comedian    , well nobody's laughing now.",
+    "My superpower is making people laugh. Which would be great if I was trying to be funny.",
     "Why did the physics teacher break up with the biology teacher?            There was no chemistry."
 ]
 jokes = deque(jokes)
@@ -56,9 +61,12 @@ def joke():
     s.speak("Would you like to hear another one?")
     r = None
 
-    r = robot.hmi.query('', 'T -> yes | no', 'T').sentence
+    try:
+        r = hmi.query('', 'T -> yes | no', 'T').sentence
+    except TimeoutException:
+        pass
 
-    if not r or r == "no" or r.result == "":
+    if not r or r == "no":
         s.speak("Ok, I will be quiet for another %d minutes" % minutes)
         last_update = rospy.Time.now()
 
